@@ -13,6 +13,9 @@
       </canvas>
     </div>
 
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script type="text/javascript">
       var canvas;
       var ctx;
@@ -22,7 +25,9 @@
       var y = 100;
       var WIDTH = 800;
       var HEIGHT = 800;
-      var players = {}
+      var self;
+      var players = {};
+      var socket = io();
 
       function circle(x,y,r) {
         ctx.beginPath();
@@ -42,35 +47,48 @@
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
       }
 
+      function generateSelf(){
+        self = Math.random()
+        x = Math.random() * WIDTH
+        y = Math.random() * HEIGHT
+        players[self] = {cx:x, cy:y}
+      }
+
       function init() {
         canvas = document.getElementById("canvas");
         ctx = canvas.getContext("2d");
+        generateSelf();
+        socket.emit('join', self, players[self])
         return setInterval(draw, 10);
       }
 
       function doKeyDown(evt){
         switch (evt.keyCode) {
           case 38:  /* Up arrow was pressed */
-          if (y - dy > 0){
-            y -= dy;
-          }
+            if (y - dy > 0){
+              players[self].cy -= dy;
+            }
           break;
           case 40:  /* Down arrow was pressed */
-          if (y + dy < HEIGHT){
-            y += dy;
-          }
-          break;
+            if (y + dy < HEIGHT){
+              players[self].cy += dy;
+            }
+            socket.emit('move', self, 1)
+            break;
           case 37:  /* Left arrow was pressed */
-          if (x - dx > 0){
-            x -= dx;
-          }
-          break;
+            if (x - dx > 0){
+              players[self].cx -= dx;
+            }
+            socket.emit('move', self, 2)
+            break;
           case 39:  /* Right arrow was pressed */
-          if (x + dx < WIDTH){
-            x += dx;
-          }
-          break;
+            if (x + dx < WIDTH){
+              players[self].cx += dx;
+            }
+            socket.emit('move', self, 3)
+            break;
         }
+        socket.emit('move', self, players[self].cx, players[self].cy)
       }
 
       function draw() {
@@ -79,8 +97,24 @@
         ctx.strokeStyle = "black";
         rect(0,0,WIDTH,HEIGHT);
         ctx.fillStyle = "purple";
-        circle(x, y, 10);
+        for (var key in players){
+          circle(players[key].cx, players[key].cy, 10);
+        }
       }
+
+      socket.on('move', function(id, x, y){
+        players[id].cx = x
+        players[id].cy = y
+      });
+      socket.on('allplayers', function(allplayers){
+        for (var key in allplayers){
+          players[key] = allplayers[key]
+        }
+      });
+      socket.on('join', function(id, coordinates){
+        socket.emit('log', id)
+        players[id] = coordinates
+      })
 
       init();
       window.addEventListener('keydown',doKeyDown,true);
