@@ -21,7 +21,6 @@ io.on('connection', function(socket){
     console.log("log " + msg)
   });
   socket.on('move', function(id, x, y){
-    console.log("move " + id)
     socket.broadcast.emit('move', id, x, y)
     players[id] = {cx:x, cy:y}
   });
