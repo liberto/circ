@@ -13,10 +13,12 @@ io.on('connection', function(socket){
   socket.on('join', function(id, coordinates){
     console.log("join " + id)
     socket.broadcast.emit('join', id, coordinates)
-    //io.to(socket.id).emit('allplayers', players)
+    io.to(socket.id).emit('allplayers', players)
+    console.log(id + " joined and was sent " + Object.keys(players).length)
+    players[id] = coordinates
   })
   socket.on('log', function(msg){
-    //console.log("log " + msg)
+    console.log("log " + msg)
   });
   socket.on('move', function(id, x, y){
     console.log("move " + id)
