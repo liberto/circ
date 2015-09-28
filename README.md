@@ -10,6 +10,9 @@ A javascript game using socket.io. Currently, circ is a multiplayer game in whic
 
 # roadmap
 - remove a circle when the player disconnects
+- add a storyline
+- beautify the game
+- add instructions
 - control your speed
 - attack other players
 - pickup power ups
