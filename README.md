@@ -4,8 +4,8 @@ A javascript game using socket.io. Currently, circ is a multiplayer game in whic
 # installation
 - Install [nodejs and npm](https://docs.npmjs.com/getting-started/installing-node)
 - cd into the project's root directory
-- npm install
-- node index.js
+- execute 'npm install'
+- execute 'node index.js'
 - visit localhost:3000
 
 # roadmap
