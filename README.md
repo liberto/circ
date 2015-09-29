@@ -9,7 +9,7 @@ A javascript game using socket.io. Currently, circ is a multiplayer game in whic
 - visit localhost:3000
 
 # roadmap
-- remove a circle when the player disconnects
+- circles follow mouse instead of keyboard
 - add a storyline
 - beautify the game
 - add instructions
