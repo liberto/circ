@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Canvas Test</title>
+  <title>Circ, The Game</title>
 </head>
 <body>
   <section>
@@ -25,7 +25,6 @@
       var y = 100;
       var WIDTH = 800;
       var HEIGHT = 800;
-      var self;
       var players = {};
       var socket = io();
 
@@ -48,17 +47,16 @@
       }
 
       function generateSelf(){
-        self = Math.random()
         x = Math.random() * WIDTH
         y = Math.random() * HEIGHT
-        players[self] = {cx:x, cy:y}
+        players["self"] = {cx:x, cy:y}
       }
 
       function init() {
         canvas = document.getElementById("canvas");
         ctx = canvas.getContext("2d");
         generateSelf();
-        socket.emit('join', self, players[self])
+        socket.emit('join', players["self"])
         return setInterval(draw, 10);
       }
 
@@ -66,29 +64,26 @@
         switch (evt.keyCode) {
           case 38:  /* Up arrow was pressed */
             if (y - dy > 0){
-              players[self].cy -= dy;
+              players["self"].cy -= dy;
             }
           break;
           case 40:  /* Down arrow was pressed */
             if (y + dy < HEIGHT){
-              players[self].cy += dy;
+              players["self"].cy += dy;
             }
-            socket.emit('move', self, 1)
             break;
           case 37:  /* Left arrow was pressed */
             if (x - dx > 0){
-              players[self].cx -= dx;
+              players["self"].cx -= dx;
             }
-            socket.emit('move', self, 2)
             break;
           case 39:  /* Right arrow was pressed */
             if (x + dx < WIDTH){
-              players[self].cx += dx;
+              players["self"].cx += dx;
             }
-            socket.emit('move', self, 3)
             break;
         }
-        socket.emit('move', self, players[self].cx, players[self].cy)
+        socket.emit('move', players["self"].cx, players["self"].cy)
       }
 
       function draw() {
@@ -114,6 +109,9 @@
       socket.on('join', function(id, coordinates){
         socket.emit('log', id)
         players[id] = coordinates
+      })
+      socket.on('left', function(id){
+        delete players[id]
       })
 
       init();

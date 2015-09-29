@@ -10,19 +10,21 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
   io.to(socket.id).emit('allplayers',JSON.stringify(players));
-  socket.on('join', function(id, coordinates){
-    console.log("join " + id)
-    socket.broadcast.emit('join', id, coordinates)
+  socket.on('join', function(coordinates){
+    socket.broadcast.emit('join', socket.id, coordinates)
     io.to(socket.id).emit('allplayers', players)
-    console.log(id + " joined and was sent " + Object.keys(players).length)
-    players[id] = coordinates
+    players[socket.id] = coordinates
+  })
+  socket.on('disconnect', function(){
+    delete players[socket.id]
+    socket.broadcast.emit('left', socket.id)
   })
   socket.on('log', function(msg){
     console.log("log " + msg)
   });
-  socket.on('move', function(id, x, y){
-    socket.broadcast.emit('move', id, x, y)
-    players[id] = {cx:x, cy:y}
+  socket.on('move', function(x, y){
+    socket.broadcast.emit('move', socket.id, x, y)
+    players[socket.id] = {cx:x, cy:y}
   });
 });
 
