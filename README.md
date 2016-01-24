@@ -18,3 +18,6 @@ A javascript game using socket.io. Currently, circ is a multiplayer game in whic
 - pickup power ups
 - enter portals to different planes
 - set down portals to different planes
+
+# known bugs
+- loading the page while any player is moving results in a bad page load
